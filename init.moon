@@ -33,7 +33,7 @@ initialise = (w, h) ->
 graphics = initialise width, height
 
 -- Initialise new entity for rawr.png
-player = Entity "rawr.png", graphics.rndr, { x:50, y:50, w:64, h:64 }
+player = Entity "assets/rawr.png", graphics.rndr, { x:50, y:50, w:64, h:64 }
 
 while true
   for e in sdl.pollEvent!
@@ -41,7 +41,7 @@ while true
       running = false
     elseif e.type == sdl.event.KeyDown
       print string.format("key down: %d -> %s", e.keysym.sym, sdl.getKeyName(e.keysym.sym))
-      
+
   graphics.rndr\clear!
   player\render!
   graphics.rndr\present!
