@@ -11,4 +11,4 @@ build: $(LUAOUT)
 	moonc $<
 
 run: build
-	luajit game.lua
+	luajit main.lua
