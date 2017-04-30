@@ -5,8 +5,9 @@ image = require 'SDL.image'
 -- an enemy in the game.
 class Entity
   new: (filename, renderer, data) =>
-    image = image.load filename
+    img = image.load filename
     @renderer = renderer
-    @texture = @renderer\createTextureFromSurface image
+    @texture = @renderer\createTextureFromSurface img
     @data = data
+    
   render: => @renderer\copy @texture, nil, @data

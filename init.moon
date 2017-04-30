@@ -1,23 +1,15 @@
+--------------------
 --
--- Main game file. 
+-- Main game file
 --
 
--- Path magic apparently
 require 'luarocks.loader'
 sdl = require 'SDL'
 image = require 'SDL.image'
 
 -- Other requires for this game
 Entity = require 'entity'
-
--- Variables and stuff
-running = true
-width = 1280
-height = 720
-
-dir = { 1, 1 }
-graphics = {}
-pos = {}
+World = require 'game'
 
 -- Initialises the SDL context
 initialise = (w, h) ->
@@ -26,27 +18,48 @@ initialise = (w, h) ->
 
   stuff.win = sdl.createWindow title:"Dino Dino", width:w, height:h
   stuff.rndr = sdl.createRenderer stuff.win, -1
-  stuff.rndr\setDrawColor 0x333333
+  stuff.rndr\setDrawColor 0x999999
   return stuff
 
--- Initialise the graphics thingy
+-------------------------------------------------------------
+
+-- Variables and stuff
+running = true
+width = 1280
+height = 720
+
+-- Define file paths for entities
+tree = 'assets/wood.png'
+player = 'assets/rawr.png'
+ground = 'assets/dirtyearth.png'
+bird = 'assets/birdistheword.png'
+
+-- Initialise the SDL graphics objects
 graphics = initialise width, height
 
--- Initialise new entity for rawr.png
-player = Entity "assets/rawr.png", graphics.rndr, { x:50, y:50, w:64, h:64 }
+-- Initialise a new game world
+world = World graphics.rndr, ground, width, height
+
 
 while true
-  for e in sdl.pollEvent!
-    if e.type == sdl.event.quit
-      running = false
-    elseif e.type == sdl.event.KeyDown
-      print string.format("key down: %d -> %s", e.keysym.sym, sdl.getKeyName(e.keysym.sym))
+  world\update!
 
-  graphics.rndr\clear!
-  player\render!
-  graphics.rndr\present!
 
-  sdl.delay 10
+-- Initialise new entity for the player
+-- player = Entity player, graphics, { x:50, y:50, w:64, h:64 }
+
+-- while true
+--   for e in sdl.pollEvent!
+--     if e.type == sdl.event.quit
+--       running = false
+--     elseif e.type == sdl.event.KeyDown
+--       print string.format("key down: %d -> %s", e.keysym.sym, sdl.getKeyName(e.keysym.sym))
+
+--   graphics.rndr\clear!
+--   player\render!
+--   graphics.rndr\present!
+
+--   sdl.delay 10
 
 -- Clean up our shit
 sdl.quit
