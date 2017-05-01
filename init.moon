@@ -6,6 +6,7 @@
 require 'luarocks.loader'
 sdl = require 'SDL'
 image = require 'SDL.image'
+socket = require "socket"
 
 -- Other requires for this game
 World = require 'game'
@@ -20,12 +21,21 @@ initialise = (w, h) ->
   stuff.rndr\setDrawColor 0xAAAAAA
   return stuff
 
+-- Utility function get gets current time in milliseconds
+curr_millis = -> socket.gettime!
+
 -------------------------------------------------------------
 
 -- Variables and stuff
 running = true
 width = 1280
 height = 720
+
+-- We will measure times between frames
+delta = 0.001
+
+-- With time the speed and time between spawns will change
+difficulty = 1
 
 -- Define file paths for entities
 tree = 'assets/wood.png'
@@ -40,39 +50,41 @@ graphics = initialise width, height
 world = World graphics.rndr, ground, width, height
 world\start player
 
-while true
-  world\update!
+-- Setup random seed for spawns
+math.randomseed os.time!
+spawn = math.random 1, 3.75
+print "First spawn in " .. spawn
 
+while running
+  jump = false
+  start = curr_millis!
 
--- Initialise new entity for the player
--- player = Entity player, graphics, { x:50, y:50, w:64, h:64 }
+  -- Check for input signals
+  for e in sdl.pollEvent!
+    if e.type == sdl.event.quit
+      running = false
+    elseif e.type == sdl.event.KeyDown
 
--- while true
---   for e in sdl.pollEvent!
---     if e.type == sdl.event.quit
---       running = false
---     elseif e.type == sdl.event.KeyDown
---       print string.format("key down: %d -> %s", e.keysym.sym, sdl.getKeyName(e.keysym.sym))
+      -- Check if user pressed SPACE
+      jump = true if e.keysym.sym == 32
 
---   graphics.rndr\clear!
---   player\render!
---   graphics.rndr\present!
+  -- Spawn new things into the world
+  spawn -= delta
+  if spawn <= 0
+    world\spawn_new tree
+    spawn = math.random 2, 3.5
+    spawn *= difficulty
+    print "Next spawn in " .. spawn
 
---   sdl.delay 10
+  -- Then update the currently running world
+  world\update jump, difficulty
+
+  -- Calculate delta time
+  delta = curr_millis! - start
+
+  -- Increase the difficulty slooooowly
+  difficulty -= 0.000005
 
 -- Clean up our shit
 sdl.quit
 image.quit
-
--- while running 
---     for e in sdl.pollEvent()
---         if e.type == sdl.event.Quit
---             running = false
---         elseif e.type == sdl.event.KeyDown
---             print(string.format("key down: %d -> %s", e.keysym.sym, sdl.getKeyName(e.keysym.sym)))
---         elseif e.type == sdl.event.MouseWheel
---             print(string.format("mouse wheel: %d, x=%d, y=%d", e.which, e.x, e.y))
---         elseif e.type == sdl.event.MouseButtonDown
---             print(string.format("mouse button down: %d, x=%d, y=%d", e.button, e.x, e.y))
---         elseif e.type == sdl.event.MouseMotion
---             print(string.format("mouse motion: x=%d, y=%d", e.x, e.y))

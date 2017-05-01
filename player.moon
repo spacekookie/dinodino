@@ -1,5 +1,7 @@
 Entity = require 'entity'
 
+-- Define up here because...something
+JUMP_FORCE = -1.25
 
 -- A specific entity that represents a player
 -- Has special functions to handle jumping
@@ -10,8 +12,8 @@ class Player extends Entity
     super(filename, renderer, data)
 
     -- Do we move, how fast and in what direction?
-    @velocidy = -1
-    @slowdown = 0.005
+    @velocidy = JUMP_FORCE
+    @slowdown = 0.006
     @jumping = false
 
     -- Where do we start and where do we end?
@@ -20,7 +22,8 @@ class Player extends Entity
 
   -- Starts jumping the player entity
   jump: => 
-    print "Player is now jumping"
+    return if @jumping
+
     @speed = -@velocidy
     @jumping = true
 
@@ -36,6 +39,6 @@ class Player extends Entity
 
     -- Reset position when the jump is complete
     if @data.y > @basepoint
-      @velocidy = -1
+      @velocidy = JUMP_FORCE
       @data.y = @basepoint
       @jumping = false

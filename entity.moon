@@ -10,6 +10,10 @@ class Entity
     @texture = @renderer\createTextureFromSurface img
     @data = data
     
+  move: (x) =>
+    @data.x -= x
+    return @data.x < 0
+
   render: => @renderer\copy @texture, nil, @data
 
 

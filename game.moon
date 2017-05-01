@@ -20,6 +20,7 @@ class Ground
     @secondary = Entity gnd_img, @renderer, s_data
 
   move: (offset) =>
+
     -- Move both grounds to the left
     @p_data.x -= offset
     @s_data.x -= offset
@@ -47,7 +48,7 @@ class GameWorld
     @renderer = renderer
     @width = w
     @height = h
-    @speed = 0.35
+    @speed = 0.5
 
     -- A list of entities to render
     @entities = {}
@@ -56,36 +57,42 @@ class GameWorld
 
   -- Starts a new game and puts a player at the start location
   start: (name) =>
-    @player = Player name, @renderer, { x:50, y:(@height/2)+64, w:64, h:64 }
+    @player = Player name, @renderer, { x:150, y:(@height/2)+64, w:64, h:64 }
     -- table.insert @entities, Entity name, @renderer, data
     @started = true
 
   -- Spawns a new enemy at location x, y
-  spawn_new: (name, x, y) => 
+  spawn_new: (name) =>
+    data = { x:@width+64, y:(@height/2)+64, w:64, h:64 }
+    table.insert @entities, Entity name, @renderer, data
     
   -- Updates the game world
-  update: =>
+  update: (jump, difficulty) =>
 
     -- Ignore everything if we haven't officially started yet
     return if not @started
 
-    -- Move the ground
-    @ground\move @speed
+    -- Adjust the speed for this frame
+    speed = @speed * (1 / difficulty)
 
-    if not @player.jumping
-      @player\jump!
+    -- Move the ground
+    @ground\move speed
+
+    -- Initialise a player jump if we got the signal
+    @player\jump! if jump
 
     -- Clear screen and render ground
     @renderer\clear!
     @ground\render!
 
-    -- Draw the player specifically
-    @player\update!
-    @player\render!
-
     -- Draw all other entities
     for e in *@entities
+      e\move speed
       e\render!
+
+    -- Draw the player seperately
+    @player\update!
+    @player\render!
 
     -- SHOW ME WHAT YOU GOT!
     @renderer\present!
