@@ -113,9 +113,17 @@ class GameWorld
     -- SHOW ME WHAT YOU GOT!
     @renderer\present!
 
-    -- Remove things that should be removed
-    -- for e in @toremove_e do table.remove @entities, e
-    -- for e in @toremove_c do table.remove @critters, e
+    -- Remove entities that are no longer in view
+    for i=#@entities, 1, -1
+      if @entities[i].data.x > -@entities[i].data.w
+        continue
+      table.remove @entities, i
+
+    -- Remove critters the same way
+    for i=#@critters, 1, -1
+      if @critters[i].data.x > -@critters[i].data.w
+        continue
+      table.remove @critters, i
 
     @toremove_e = {}
     @toremove_c = {}
