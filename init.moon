@@ -79,7 +79,7 @@ while running
   if spawn <= 0
 
     -- Spawn something random and cool :)
-    id = math.random 2
+    id = math.random #spawnee
     world\spawn_entity spawnee[id], id
 
     -- Calculate the next spawn time
@@ -110,5 +110,5 @@ while running
 print "You survived #{math.floor survival_time} seconds"
 
 -- Clean up our shit
-sdl.quit
-image.quit
+sdl.quit!
+image.quit!
