@@ -8,7 +8,6 @@ sdl = require 'SDL'
 image = require 'SDL.image'
 
 -- Other requires for this game
-Entity = require 'entity'
 World = require 'game'
 
 -- Initialises the SDL context
@@ -18,7 +17,7 @@ initialise = (w, h) ->
 
   stuff.win = sdl.createWindow title:"Dino Dino", width:w, height:h
   stuff.rndr = sdl.createRenderer stuff.win, -1
-  stuff.rndr\setDrawColor 0x999999
+  stuff.rndr\setDrawColor 0xAAAAAA
   return stuff
 
 -------------------------------------------------------------
@@ -39,7 +38,7 @@ graphics = initialise width, height
 
 -- Initialise a new game world
 world = World graphics.rndr, ground, width, height
-
+world\start player
 
 while true
   world\update!

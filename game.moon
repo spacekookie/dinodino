@@ -1,6 +1,8 @@
 Entity = require 'entity'
+Player = require 'player'
 
-
+-- Simple class that handles the rolling ground in the level
+--
 class Ground
   new: (renderer, gnd_img, w, h) =>
     @renderer = renderer
@@ -33,6 +35,7 @@ class Ground
     @primary\render!
     @secondary\render!
 
+
 -- A class that represents the game world
 --   Handles things like spawning new enemies
 --   moving the player along and generally
@@ -44,6 +47,7 @@ class GameWorld
     @renderer = renderer
     @width = w
     @height = h
+    @speed = 0.35
 
     -- A list of entities to render
     @entities = {}
@@ -51,8 +55,9 @@ class GameWorld
     @started = false
 
   -- Starts a new game and puts a player at the start location
-  start: => 
-    @entites.insert Entity name, @renderer, { x:x, y:y, w:64, h:64 }
+  start: (name) =>
+    @player = Player name, @renderer, { x:50, y:(@height/2)+64, w:64, h:64 }
+    -- table.insert @entities, Entity name, @renderer, data
     @started = true
 
   -- Spawns a new enemy at location x, y
@@ -60,13 +65,32 @@ class GameWorld
     
   -- Updates the game world
   update: =>
-    @ground\move 15
 
+    -- Ignore everything if we haven't officially started yet
+    return if not @started
+
+    -- Move the ground
+    @ground\move @speed
+
+    if not @player.jumping
+      @player\jump!
+
+    -- Clear screen and render ground
     @renderer\clear!
     @ground\render!
 
-    -- Draw all other entities
-    -- for e in @entites
-    --   print e
+    -- Draw the player specifically
+    @player\update!
+    @player\render!
 
+    -- Draw all other entities
+    for e in *@entities
+      e\render!
+
+    -- SHOW ME WHAT YOU GOT!
     @renderer\present!
+
+  -- Checks for collisions between player and other entities
+  --   returns boolean depending on if it finds any
+  find_collision: =>
+    p_data = @player.data
