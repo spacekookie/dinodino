@@ -52,6 +52,12 @@ class GameWorld
 
     -- A list of entities to render
     @entities = {}
+    @toremove_e = {}
+
+    -- A list of critters to render (no collision)
+    @critters = {}
+    @toremove_c = {}
+    
     @ground = Ground @renderer, gnd_img, @width, @height
     @started = false
 
@@ -62,10 +68,15 @@ class GameWorld
     @started = true
 
   -- Spawns a new enemy at location x, y
-  spawn_new: (name, hx) =>
+  spawn_entity: (name, hx) =>
     data = { x:@width+64, y:(@height/2)+64*-(hx-2), w:64, h:64 }
     table.insert @entities, Entity name, @renderer, data
     
+  -- Create a fluffy new cloud
+  spawn_critter: (name, height) =>
+    data = {x:@width+64, y:(@height/2)+64-height, w:115, h:65}
+    table.insert @critters, Entity name, @renderer, data
+
   -- Updates the game world
   update: (jump, difficulty) =>
 
@@ -90,6 +101,11 @@ class GameWorld
       e\move speed
       e\render!
 
+    -- Draw all critters (don't have collision checks)
+    for e in *@critters
+      e\move speed
+      e\render!
+
     -- Draw the player seperately
     @player\update!
     @player\render!
@@ -97,7 +113,40 @@ class GameWorld
     -- SHOW ME WHAT YOU GOT!
     @renderer\present!
 
+    -- Remove things that should be removed
+    -- for e in @toremove_e do table.remove @entities, e
+    -- for e in @toremove_c do table.remove @critters, e
+
+    @toremove_e = {}
+    @toremove_c = {}
+
   -- Checks for collisions between player and other entities
   --   returns boolean depending on if it finds any
   find_collision: =>
-    p_data = @player.data
+
+    -- Adds a bit of tolerance to make the game easier (more fun)
+    tol = 6
+
+    px = @player.data.x
+    py = @player.data.y
+    pw = @player.data.w
+    ph = @player.data.h
+
+    for e in *@entities
+      ex = e.data.x
+      ey = e.data.y
+      ew = e.data.w
+      eh = e.data.h
+
+      -- There are 4 collision cases we need to cover
+      if px-tol >= ex and px+tol <= ex+ew and py-tol >= ey and py+tol <= ey+eh
+        return true
+      if px+pw-tol >= ex and px+pw+tol <= ex+ew and py-tol >= ey and py+tol <= ey+eh
+        return true
+      if px-tol >= ex and px+tol <= ex+ew and py+ph-tol >= ey and py+ph+tol <= ey+ph
+        return true
+      if px+pw-tol >= ex and px+pw+tol <= ex+ew and py+ph-tol >= ey and py+ph+tol <= ey+ph
+        return true
+
+    -- The player didn't fuck up :)
+    return false
