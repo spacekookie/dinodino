@@ -21,11 +21,6 @@ initialise = (w, h) ->
   stuff.rndr\setDrawColor 0xAAAAAA
   return stuff
 
--- Utility function get gets current time in milliseconds
-curr_millis = -> socket.gettime!
-
-
-
 -------------------------------------------------------------
 
 -- Variables and stuff
@@ -68,7 +63,7 @@ cloud_spawn = math.random 0.5, 1
 
 while running
   jump = false
-  start = curr_millis!
+  start = socket.gettime!
 
   -- Check for input signals
   for e in sdl.pollEvent!
@@ -104,7 +99,7 @@ while running
   running = false if world\find_collision!
 
   -- Calculate delta time
-  delta = curr_millis! - start
+  delta = socket.gettime! - start
 
   -- Increase the difficulty slooooowly
   difficulty -= 0.000005
