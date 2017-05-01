@@ -11,3 +11,7 @@ class Entity
     @data = data
     
   render: => @renderer\copy @texture, nil, @data
+
+
+-- Return everything we declared here today
+-- return { :Entity, :Player }
