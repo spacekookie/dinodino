@@ -24,6 +24,8 @@ initialise = (w, h) ->
 -- Utility function get gets current time in milliseconds
 curr_millis = -> socket.gettime!
 
+
+
 -------------------------------------------------------------
 
 -- Variables and stuff
@@ -36,12 +38,17 @@ delta = 0.001
 
 -- With time the speed and time between spawns will change
 difficulty = 1
+survival_time = 0
 
--- Define file paths for entities
+-- God these puns are so shitty :/
 tree = 'assets/wood.png'
 player = 'assets/rawr.png'
+cloud = 'assets/serverless.png'
 ground = 'assets/dirtyearth.png'
 bird = 'assets/birdistheword.png'
+
+-- Make a list we can easily select something to spawn from
+spawnee = { tree, bird }
 
 -- Initialise the SDL graphics objects
 graphics = initialise width, height
@@ -54,6 +61,10 @@ world\start player
 math.randomseed os.time!
 spawn = math.random 1, 3.75
 print "First spawn in " .. spawn
+
+-- Spawn clouds randomly too (more frequently though)
+cloud_spawn = math.random 0.5, 1
+
 
 while running
   jump = false
@@ -71,19 +82,37 @@ while running
   -- Spawn new things into the world
   spawn -= delta
   if spawn <= 0
-    world\spawn_new tree
-    spawn = math.random 2, 3.5
+
+    -- Spawn something random and cool :)
+    id = math.random 2
+    world\spawn_entity spawnee[id], id
+
+    -- Calculate the next spawn time
+    spawn = math.random 1.5, 3.5
     spawn *= difficulty
-    print "Next spawn in " .. spawn
+
+  -- We also want to spawn clouds at varying height levels
+  cloud_spawn -= delta
+  if cloud_spawn <= 0
+    world\spawn_critter cloud, math.random 150, 450
+    cloud_spawn = math.random 0.5, 1
 
   -- Then update the currently running world
   world\update jump, difficulty
+
+  -- Check if the player fucked up
+  running = false if world\find_collision!
 
   -- Calculate delta time
   delta = curr_millis! - start
 
   -- Increase the difficulty slooooowly
   difficulty -= 0.000005
+  survival_time += delta
+
+
+-- We only reach this point if the game ended (player failed or quit)
+print "You survived #{math.floor survival_time} seconds"
 
 -- Clean up our shit
 sdl.quit
