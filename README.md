@@ -6,3 +6,12 @@ A clone of the Chrom[e|ium] no-internet-game in Moonscript with LuaJIT and SDL n
 The game is pretty terrible and has a few bugs. But here you go :)
 
 ![Dino Dino Screenshot](screenshot1.png)
+
+## Dependencies
+
+* LuaJIT
+* SDL2
+* luarocks
+  * lua-SDL2
+  * moonscript
+* make
