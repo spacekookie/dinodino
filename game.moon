@@ -62,8 +62,8 @@ class GameWorld
     @started = true
 
   -- Spawns a new enemy at location x, y
-  spawn_new: (name) =>
-    data = { x:@width+64, y:(@height/2)+64, w:64, h:64 }
+  spawn_new: (name, hx) =>
+    data = { x:@width+64, y:(@height/2)+64*-(hx-2), w:64, h:64 }
     table.insert @entities, Entity name, @renderer, data
     
   -- Updates the game world
