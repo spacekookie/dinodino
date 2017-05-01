@@ -63,13 +63,13 @@ class GameWorld
 
   -- Starts a new game and puts a player at the start location
   start: (name) =>
-    @player = Player name, @renderer, { x:150, y:(@height/2)+58, w:64, h:64 }
+    @player = Player name, @renderer, { x:150, y:(@height/2)+68, w:64, h:64 }
     -- table.insert @entities, Entity name, @renderer, data
     @started = true
 
   -- Spawns a new enemy at location x, y
   spawn_entity: (name, hx) =>
-    data = { x:@width+64, y:(@height/2)+64*-(hx-2), w:64, h:64 }
+    data = { x:@width+64, y:(@height/2)+60*-(hx-2), w:64, h:64 }
     table.insert @entities, Entity name, @renderer, data
     
   -- Create a fluffy new cloud
