@@ -63,7 +63,7 @@ class GameWorld
 
   -- Starts a new game and puts a player at the start location
   start: (name) =>
-    @player = Player name, @renderer, { x:150, y:(@height/2)+64, w:64, h:64 }
+    @player = Player name, @renderer, { x:150, y:(@height/2)+58, w:64, h:64 }
     -- table.insert @entities, Entity name, @renderer, data
     @started = true
 

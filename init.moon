@@ -59,6 +59,7 @@ delta = 0.001
 -- With time the speed and time between spawns will change
 difficulty = 1
 survival_time = 0
+score = 0
 
 -- God these puns are so shitty :/
 tree = 'assets/wood.png'
@@ -123,10 +124,11 @@ while running
   world\update jump, difficulty
 
   -- Draw the highscore font
-  score = "Score: #{math.floor survival_time*100}"
-  s = graphics.font\renderUtf8 score , "solid", 0
+  score = math.floor survival_time*100
+  score_text = "Score: #{score}"
+  s = graphics.font\renderUtf8 score_text , "solid", 0
   text = graphics.rndr\createTextureFromSurface s
-  graphics.rndr\copy text, nil, get_font_size graphics.font, score
+  graphics.rndr\copy text, nil, get_font_size graphics.font, score_text
 
   -- SHOW ME WHAT YOU GOT!
   graphics.rndr\present!
@@ -141,12 +143,9 @@ while running
   difficulty -= 0.000005
   survival_time += delta
 
-  -- Update the highscore counter
-
-
 
 -- We only reach this point if the game ended (player failed or quit)
-print "You survived #{math.floor survival_time} seconds"
+print "Your score was #{score}. Good job! :)"
 
 -- Clean up our shit
 sdl.quit!
