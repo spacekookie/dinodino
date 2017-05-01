@@ -41,6 +41,11 @@ ffi.cdef[[
   int clock_gettime(clockid_t clk_id, struct timespec *tp);
 ]]
 
+-- A function that returns the size for a font and string
+get_font_size = (font, text) ->
+  w, h = font\sizeText text
+  { x:0, y:0, w:w*2, h:h*2 }
+
 -------------------------------------------------------------
 
 -- Variables and stuff
@@ -80,7 +85,6 @@ print "First spawn in " .. spawn
 -- Spawn clouds randomly too (more frequently though)
 cloud_spawn = math.random 0.5, 1
 
-
 while running
   jump = false
   start = socket.gettime!
@@ -119,10 +123,10 @@ while running
   world\update jump, difficulty
 
   -- Draw the highscore font
-  score = math.floor survival_time*100
-  s = graphics.font\renderUtf8 "Score: #{score}", "solid", 0
+  score = "Score: #{math.floor survival_time*100}"
+  s = graphics.font\renderUtf8 score , "solid", 0
   text = graphics.rndr\createTextureFromSurface s
-  graphics.rndr\copy text, nil, { x:0, y:0, w:100, h: 25 }
+  graphics.rndr\copy text, nil, get_font_size graphics.font, score
 
   -- SHOW ME WHAT YOU GOT!
   graphics.rndr\present!
