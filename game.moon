@@ -92,8 +92,7 @@ class GameWorld
     -- Initialise a player jump if we got the signal
     @player\jump! if jump
 
-    -- Clear screen and render ground
-    @renderer\clear!
+    --  render ground
     @ground\render!
 
     -- Draw all other entities
@@ -109,9 +108,6 @@ class GameWorld
     -- Draw the player seperately
     @player\update!
     @player\render!
-
-    -- SHOW ME WHAT YOU GOT!
-    @renderer\present!
 
     -- Remove entities that are no longer in view
     for i=#@entities, 1, -1

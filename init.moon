@@ -4,9 +4,11 @@
 --
 
 require 'luarocks.loader'
+ffi = require 'ffi'
 sdl = require 'SDL'
+ttf = require 'SDL.ttf' 
 image = require 'SDL.image'
-socket = require "socket"
+socket = require 'socket'
 
 -- Other requires for this game
 World = require 'game'
@@ -19,7 +21,25 @@ initialise = (w, h) ->
   stuff.win = sdl.createWindow title:"Dino Dino", width:w, height:h
   stuff.rndr = sdl.createRenderer stuff.win, -1
   stuff.rndr\setDrawColor 0xAAAAAA
+
+  ttf.init!
+  stuff.font, err = ttf.open "DejaVuSans.ttf", 12
+  if not stuff.font
+    print "AN ERROR OCCURED OPENING THE FONT #{error err}"
+
   return stuff
+
+ffi.cdef[[
+  typedef long time_t;
+  typedef int clockid_t;
+
+  struct typespec {
+    time_t    tv_sec;   /* Seconds */
+    long      tv_nsec;  /* nanoseconds */
+  };
+
+  int clock_gettime(clockid_t clk_id, struct timespec *tp);
+]]
 
 -------------------------------------------------------------
 
@@ -92,8 +112,20 @@ while running
     world\spawn_critter cloud, math.random 150, 450
     cloud_spawn = math.random 0.5, 1
 
+  -- Clear the screen
+  graphics.rndr\clear!
+
   -- Then update the currently running world
   world\update jump, difficulty
+
+  -- Draw the highscore font
+  score = math.floor survival_time*100
+  s = graphics.font\renderUtf8 "Score: #{score}", "solid", 0
+  text = graphics.rndr\createTextureFromSurface s
+  graphics.rndr\copy text, nil, { x:0, y:0, w:100, h: 25 }
+
+  -- SHOW ME WHAT YOU GOT!
+  graphics.rndr\present!
 
   -- Check if the player fucked up
   running = false if world\find_collision!
@@ -104,6 +136,9 @@ while running
   -- Increase the difficulty slooooowly
   difficulty -= 0.000005
   survival_time += delta
+
+  -- Update the highscore counter
+
 
 
 -- We only reach this point if the game ended (player failed or quit)
