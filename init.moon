@@ -25,7 +25,7 @@ initialise = (w, h) ->
   ttf.init!
   stuff.font, err = ttf.open "DejaVuSans.ttf", 12
   if not stuff.font
-    print "AN ERROR OCCURED OPENING THE FONT #{error err}"
+    error "AN ERROR OCCURED OPENING THE FONT #{err}"
 
   return stuff
 
